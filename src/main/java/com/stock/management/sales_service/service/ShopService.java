@@ -42,6 +42,7 @@ public class ShopService {
 
 	public ShopResponseEntity createShop(ShopPayload shopPayload) {
 		Shop shop = shopUtility.getShop(shopPayload,null);
+		shop = shopRepository.save(shop);
 		List<Shop> shops = new ArrayList<Shop>();
 		shops.add(shop);
 		List<ShopResponse> shopResponses = shopUtility.getShopResponses(shops);

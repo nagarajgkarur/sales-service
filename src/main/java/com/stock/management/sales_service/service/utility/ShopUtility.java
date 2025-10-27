@@ -1,5 +1,6 @@
 package com.stock.management.sales_service.service.utility;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,6 +39,7 @@ public class ShopUtility {
 		Shop shop = null;
 		if(id==null) {
 			shop = new Shop();
+			shop.setCreatedAt(LocalDateTime.now());
 		}else {
 			shop = shopRepository.findById(id).orElseThrow();
 		}
@@ -46,7 +48,7 @@ public class ShopUtility {
 			shop.setAddress(shopPayload.getAddress());
 		}
 		if(StringUtils.isNotBlank(shopPayload.getContactNumber())) {
-			shop.setContactNumber(shop.getContactNumber());
+			shop.setContactNumber(shopPayload.getContactNumber());
 		}
 		if(StringUtils.isNotBlank(shopPayload.getEmail())) {
 			shop.setEmail(shopPayload.getEmail());

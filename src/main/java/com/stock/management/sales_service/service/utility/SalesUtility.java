@@ -1,13 +1,22 @@
 package com.stock.management.sales_service.service.utility;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import com.stock.management.sales_service.client.ProductClient;
 import com.stock.management.sales_service.domain.Sales;
 import com.stock.management.sales_service.domain.Shop;
+import com.stock.management.sales_service.dto.ItemsPayload;
+import com.stock.management.sales_service.dto.ProductResponse;
+import com.stock.management.sales_service.dto.ProductResponseEntity;
 import com.stock.management.sales_service.dto.SalesInvoicePayload;
 import com.stock.management.sales_service.dto.SalesResponse;
 import com.stock.management.sales_service.repository.SalesRepository;
@@ -22,6 +31,9 @@ public class SalesUtility {
 	
 	@Autowired
 	ShopRepository shopRepository;
+	
+	@Autowired
+	ProductClient productClient;
 	
 	public List<SalesResponse> getSalesResponses(List<Sales> salesList) {
 		return salesList.stream().map(e->getSalesResponse(e)).collect(Collectors.toList());
@@ -42,34 +54,42 @@ public class SalesUtility {
 		return salesResponse;
 	}
 
-	public Sales getSales(SalesInvoicePayload salesInvoicePayload,Long id) {
-		Sales sales = null;
-		if(id==null) {
-			sales = new Sales();
-		}else {
-			sales = salesRepository.findById(id).orElseThrow();
-		}
-		if(salesInvoicePayload.getBillNumber() != null) {
-			sales.setBillNumber(salesInvoicePayload.getBillNumber());
-		}
-		
-		if(salesInvoicePayload.getPartId() != null) {
-			sales.setPartId(salesInvoicePayload.getPartId());;
-		}
-		
-		if(salesInvoicePayload.getQuantity()!=null) {
-			sales.setQuantity(salesInvoicePayload.getQuantity());
+	public Sales getSales(ItemsPayload itemsPayload,Long billNumber) {
+		Sales sales =  new Sales();
+		sales.setBillNumber(billNumber);
+		if(itemsPayload.getPartId() != null) {
+			sales.setPartId(itemsPayload.getPartId());
+			ResponseEntity<ProductResponseEntity> proResponseEntity =  productClient.getProductByPartId(itemsPayload .getPartId());
+			ProductResponseEntity productResponseEntity = proResponseEntity.getBody();
+			if(productResponseEntity.getProducts() != null) {
+				ProductResponse productResponse = productResponseEntity.getProducts().get(0);
+				sales.setPartName(productResponse.getPartName());
+				sales.setPartDescription(productResponse.getPartDescription());
+			}
 		}
 		
-		if(salesInvoicePayload.getShopId() != null) {
-			Shop shop = shopRepository.findById(salesInvoicePayload.getShopId()).orElseThrow();
+		if(itemsPayload.getQuantity()!=null) {
+			sales.setQuantity(itemsPayload.getQuantity());
+		}
+		
+		if(itemsPayload.getShopId() != null) {
+			Shop shop = shopRepository.findById(itemsPayload.getShopId()).orElseThrow();
 			sales.setShop(shop);
 		}
 		
-		if(salesInvoicePayload.getUnitPrice() != null) {
-			sales.setUnitPrice(salesInvoicePayload.getUnitPrice());
+		if(itemsPayload.getUnitPrice() != null) {
+			sales.setUnitPrice(itemsPayload.getUnitPrice());
 		}
+		
+		Double unitPrice = itemsPayload.getUnitPrice();
+		Integer quentity = itemsPayload.getQuantity();
+		sales.setSubTotal(unitPrice*quentity);
+		sales.setCreatedAt(LocalDateTime.now());
+		sales = salesRepository.save(sales);	
 		return sales;
 	}
+
+
+	
 
 }

@@ -9,7 +9,7 @@ public class SalesResponse {
 	private Long id;
 	private Long billNumber;
 	private Long shopId;
-	private Long partId;
+	private String partId;
 	private Integer quantity;
 	private Double unitPrice;
 	private Double subTotal;
@@ -33,10 +33,10 @@ public class SalesResponse {
 	public void setShopId(Long shopId) {
 		this.shopId = shopId;
 	}
-	public Long getPartId() {
+	public String getPartId() {
 		return partId;
 	}
-	public void setPartId(Long partId) {
+	public void setPartId(String partId) {
 		this.partId = partId;
 	}
 	public Integer getQuantity() {

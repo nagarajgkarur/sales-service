@@ -40,10 +40,12 @@ public class SalesController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(salesResponseEntity);
 	}
 	
-	@PutMapping("/{id}")
-	public ResponseEntity<SalesResponseEntity> updateSalesInvoice(@RequestBody SalesInvoicePayload invoicePayload,Long id){
-		SalesResponseEntity salesResponseEntity = salesService.updateSalesInvoice(invoicePayload,id);
-		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(salesResponseEntity);
-	}
+	/*
+	 * @PutMapping("/{id}") public ResponseEntity<SalesResponseEntity>
+	 * updateSalesInvoice(@RequestBody SalesInvoicePayload invoicePayload,Long id){
+	 * SalesResponseEntity salesResponseEntity =
+	 * salesService.updateSalesInvoice(invoicePayload,id); return
+	 * ResponseEntity.status(HttpStatus.NO_CONTENT).body(salesResponseEntity); }
+	 */
 
 }

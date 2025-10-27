@@ -22,13 +22,13 @@ public class Sales {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	@Column(nullable = false,unique = true)
+	@Column(nullable = false)
 	private Long billNumber;
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="shop_id", nullable = false)
 	private Shop shop;
 	@Column(nullable = false)
-	private Long partId;
+	private String partId;
 	@Column(nullable = false)
 	private String partName;
 	@Column(nullable = false)
@@ -60,10 +60,10 @@ public class Sales {
 	public void setShop(Shop shop) {
 		this.shop = shop;
 	}
-	public Long getPartId() {
+	public String getPartId() {
 		return partId;
 	}
-	public void setPartId(Long partId) {
+	public void setPartId(String partId) {
 		this.partId = partId;
 	}
 	public String getPartName() {
